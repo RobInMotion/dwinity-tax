@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Impressum — Dwinity Tax</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink: { 900: '#0A2540', 700: '#2C4F7C', 500: '#5B7BA0' }, mint: { 500: '#00C896', 600: '#00A87E' }, paper: '#FAFBFC' },
+    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'], display: ['Fraunces','ui-serif','Georgia'] },
+  } } };
+</script>
+</head>
+<body class="font-sans text-ink-900 bg-paper antialiased">
+
+<header class="sticky top-0 z-40 backdrop-blur bg-paper/80 border-b border-ink-900/5">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2 font-display font-semibold text-lg tracking-tight">
+      <span class="w-7 h-7 rounded-lg bg-ink-900 text-mint-500 grid place-items-center font-bold">D</span>
+      Dwinity <span class="text-mint-600">Tax</span>
+    </a>
+    <a href="index.html" class="text-sm text-ink-700 hover:text-ink-900">← Zurück</a>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-6 py-16">
+  <h1 class="font-display text-5xl font-600 tracking-tight mb-10">Impressum</h1>
+
+  <section class="prose prose-slate max-w-none space-y-8">
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Angaben gemäß § 5 TMG</h2>
+      <p class="text-ink-700 leading-relaxed">
+        <!-- TODO: Durch echte Daten ersetzen -->
+        [Firma / Name]<br/>
+        [Straße und Hausnummer]<br/>
+        [PLZ und Ort]<br/>
+        Deutschland
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Vertreten durch</h2>
+      <p class="text-ink-700">[Vorname Nachname, Geschäftsführer]</p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Kontakt</h2>
+      <p class="text-ink-700">
+        Telefon: [+49 ...]<br/>
+        E-Mail: <a href="mailto:hello@dwinity.de" class="text-mint-600 hover:underline">hello@dwinity.de</a>
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Umsatzsteuer-ID</h2>
+      <p class="text-ink-700">Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br/>[DE...]</p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+      <p class="text-ink-700">[Vorname Nachname, Anschrift wie oben]</p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl font-600 mb-3">Haftungsausschluss</h2>
+      <p class="text-ink-700 leading-relaxed">
+        Die Inhalte dieser Seite werden mit größtmöglicher Sorgfalt erstellt, erheben aber keinen
+        Anspruch auf Vollständigkeit, Richtigkeit oder Aktualität. Dwinity Tax ist ein Software-Tool
+        zur Unterstützung bei der Erstellung von Steuerreports und stellt keinen steuerlichen Rat im
+        Sinne des StBerG dar. Für steuerliche Sachverhalte konsultieren Sie einen Steuerberater.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-ink-900/10 py-8 mt-16">
+  <div class="max-w-6xl mx-auto px-6 text-sm text-ink-500">© 2026 Dwinity. <a href="datenschutz.html" class="hover:text-ink-900">Datenschutz</a></div>
+</footer>
+</body>
+</html>

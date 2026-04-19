@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dwinity Tax — Krypto-Steuer für Deutschland</title>
+<meta name="description" content="Die erste Krypto-Steuer-Software, die deutsches Steuerrecht versteht. FIFO, DATEV-Export, MiCA- und DAC8-ready. Für Anleger und Steuerberater." />
+<meta property="og:title" content="Dwinity Tax — Krypto-Steuer für Deutschland" />
+<meta property="og:description" content="FIFO, DATEV-Export, MiCA-ready. Dwinity Tax ist die Krypto-Steuer-Software, die Finanzamt und Steuerberater akzeptieren." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tax.mkwt-strategy.tech" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: { 900: '#0A2540', 800: '#1B3A5E', 700: '#2C4F7C', 500: '#5B7BA0' },
+          mint: { 500: '#00C896', 600: '#00A87E' },
+          paper: '#FAFBFC',
+        },
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          display: ['Fraunces', 'ui-serif', 'Georgia'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-feature-settings: "ss01", "cv11"; }
+  .grad-hero {
+    background:
+      radial-gradient(60% 50% at 70% 10%, rgba(0,200,150,0.10), transparent 60%),
+      radial-gradient(50% 40% at 15% 85%, rgba(10,37,64,0.08), transparent 70%),
+      #FAFBFC;
+  }
+  .chip { display:inline-flex; align-items:center; gap:0.4rem; padding: 0.3rem 0.7rem; font-size: 0.75rem; font-weight: 600; border-radius: 999px; }
+  .card-shadow { box-shadow: 0 1px 2px rgba(10,37,64,0.04), 0 8px 24px -12px rgba(10,37,64,0.12); }
+</style>
+</head>
+<body class="font-sans text-ink-900 bg-paper antialiased">
+
+<!-- NAV -->
+<header class="sticky top-0 z-40 backdrop-blur bg-paper/80 border-b border-ink-900/5">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2 font-display font-semibold text-lg tracking-tight">
+      <span class="w-7 h-7 rounded-lg bg-ink-900 text-mint-500 grid place-items-center font-bold">D</span>
+      <span>Dwinity <span class="text-mint-600">Tax</span></span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink-700">
+      <a href="#problem" class="hover:text-ink-900">Problem</a>
+      <a href="#loesung" class="hover:text-ink-900">Lösung</a>
+      <a href="#preise" class="hover:text-ink-900">Preise</a>
+      <a href="#faq" class="hover:text-ink-900">FAQ</a>
+    </nav>
+    <a href="#waitlist" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-ink-900 text-white text-sm font-semibold hover:bg-ink-800 transition">
+      Warteliste
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="grad-hero">
+  <div class="max-w-6xl mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-32">
+    <div class="flex flex-col md:flex-row md:items-end gap-12">
+      <div class="flex-1 max-w-3xl">
+        <span class="chip bg-mint-500/10 text-mint-600 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-mint-500"></span>
+          Early Access · Sommer 2026
+        </span>
+        <h1 class="font-display text-5xl md:text-7xl font-600 leading-[1.05] tracking-tight">
+          Krypto-Steuer.<br/>
+          <span class="italic text-ink-700">Endlich</span> für<br/>
+          Deutschland gebaut.
+        </h1>
+        <p class="mt-8 text-lg md:text-xl text-ink-700 max-w-2xl leading-relaxed">
+          FIFO, Haltefrist, DATEV-Export, DeFi-Klassifizierung nach BMF.
+          Dwinity Tax spricht die Sprache deines Finanzamts — und die deines Steuerberaters.
+        </p>
+
+        <form id="waitlist-form" class="mt-10 flex flex-col sm:flex-row gap-3 max-w-xl">
+          <input type="email" required placeholder="deine@mail.de"
+            class="flex-1 px-5 py-4 rounded-xl border border-ink-900/15 bg-white text-base focus:outline-none focus:border-ink-900 focus:ring-2 focus:ring-ink-900/10 placeholder:text-ink-500" />
+          <button type="submit"
+            class="px-6 py-4 rounded-xl bg-ink-900 text-white font-semibold hover:bg-ink-800 transition whitespace-nowrap">
+            Early Access sichern
+          </button>
+        </form>
+        <p class="mt-3 text-sm text-ink-500">
+          Early-Bird-Preis: <span class="font-semibold text-ink-900">39 €</span> für das erste Jahr (statt 79 €). Keine Kreditkarte, jederzeit abbestellbar.
+        </p>
+      </div>
+
+      <!-- Trust card -->
+      <aside class="w-full md:w-80 bg-white border border-ink-900/10 rounded-2xl p-6 card-shadow">
+        <div class="text-xs font-semibold uppercase tracking-widest text-ink-500 mb-4">Gebaut für</div>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-mint-500/15 text-mint-600 grid place-items-center flex-shrink-0 mt-0.5">✓</span>
+            <div><span class="font-semibold">Privatanleger</span><br/><span class="text-ink-700">Binance, Kraken, Ledger &amp; Co.</span></div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-mint-500/15 text-mint-600 grid place-items-center flex-shrink-0 mt-0.5">✓</span>
+            <div><span class="font-semibold">DeFi-Aktive</span><br/><span class="text-ink-700">Lending, Staking, LP, Airdrops</span></div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-mint-500/15 text-mint-600 grid place-items-center flex-shrink-0 mt-0.5">✓</span>
+            <div><span class="font-semibold">Steuerberater</span><br/><span class="text-ink-700">DATEV-Export, Mandantenlizenz</span></div>
+          </li>
+        </ul>
+        <div class="mt-5 pt-5 border-t border-ink-900/10 flex flex-wrap gap-2">
+          <span class="chip bg-ink-900/5 text-ink-700">MiCA-ready</span>
+          <span class="chip bg-ink-900/5 text-ink-700">DAC8-ready</span>
+          <span class="chip bg-ink-900/5 text-ink-700">DATEV</span>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Social proof strip -->
+    <div class="mt-20 pt-10 border-t border-ink-900/10">
+      <p class="text-xs uppercase tracking-widest text-ink-500 mb-6 text-center">Unterstützt alle gängigen Plattformen</p>
+      <div class="flex flex-wrap justify-center items-center gap-x-10 gap-y-4 text-ink-700 font-semibold">
+        <span>Binance</span><span>Kraken</span><span>Coinbase</span><span>Bitpanda</span><span>MetaMask</span><span>Ledger</span><span>Trezor</span><span>Uniswap</span><span>Aave</span><span>+120 weitere</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="py-24 bg-white border-y border-ink-900/5">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-2xl">
+      <span class="chip bg-ink-900/5 text-ink-700 mb-4">Warum überhaupt ein neues Tool?</span>
+      <h2 class="font-display text-4xl md:text-5xl font-600 tracking-tight">
+        Die bestehenden Lösungen sind entweder ausländisch, alt oder Excel.
+      </h2>
+      <p class="mt-6 text-lg text-ink-700">
+        Jede April-Saison dieselbe Geschichte: drei Tage FIFO-Rechnerei,
+        Steuerberater versteht den CSV-Export nicht, DeFi bleibt Black Box.
+        Und ab 2026 wird es mit DAC8 nicht einfacher.
+      </p>
+    </div>
+
+    <div class="mt-14 grid md:grid-cols-3 gap-6">
+      <div class="p-8 rounded-2xl border border-ink-900/10 hover:border-ink-900/20 transition">
+        <div class="text-4xl mb-4">🇳🇴</div>
+        <h3 class="font-display text-xl font-600 mb-2">Koinly &amp; Co.</h3>
+        <p class="text-ink-700 text-sm leading-relaxed">
+          Aus dem Ausland, englischer Report, FIFO-Behandlung nach deutschem Recht? Holprig.
+          Dein Steuerberater liest „Loss harvesting" — und schüttelt den Kopf.
+        </p>
+      </div>
+      <div class="p-8 rounded-2xl border border-ink-900/10 hover:border-ink-900/20 transition">
+        <div class="text-4xl mb-4">📟</div>
+        <h3 class="font-display text-xl font-600 mb-2">CoinTracking</h3>
+        <p class="text-ink-700 text-sm leading-relaxed">
+          Mächtig. Aber UX von 2015, überladen, teuer. Wer zum ersten Mal Krypto versteuert,
+          steht hier vor einem Cockpit, nicht vor einer Lösung.
+        </p>
+      </div>
+      <div class="p-8 rounded-2xl border border-ink-900/10 hover:border-ink-900/20 transition">
+        <div class="text-4xl mb-4">📊</div>
+        <h3 class="font-display text-xl font-600 mb-2">Excel-Marathon</h3>
+        <p class="text-ink-700 text-sm leading-relaxed">
+          Für 15 Transaktionen ging das noch. Mit MiCA + DAC8 ab 2026 sind Meldepflichten
+          so granular, dass händisch kein Weg mehr durchführt.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LÖSUNG -->
+<section id="loesung" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-2xl mb-14">
+      <span class="chip bg-mint-500/10 text-mint-600 mb-4">Unsere Lösung</span>
+      <h2 class="font-display text-4xl md:text-5xl font-600 tracking-tight">
+        Vier Dinge, die Dwinity Tax richtig macht.
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="p-8 rounded-2xl bg-ink-900 text-white">
+        <div class="w-10 h-10 rounded-lg bg-mint-500/20 text-mint-500 grid place-items-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 class="font-display text-2xl font-600 mb-3">Deutsches Steuerrecht nativ</h3>
+        <p class="text-white/75 leading-relaxed">
+          FIFO auf Wallet-Ebene, Haltefrist 1 Jahr, Verlustverrechnung nach §23 EStG,
+          korrekte Behandlung von Airdrops, Hardforks, Staking-Rewards — nach aktuellem BMF-Schreiben.
+        </p>
+      </div>
+      <div class="p-8 rounded-2xl bg-white border border-ink-900/10">
+        <div class="w-10 h-10 rounded-lg bg-mint-500/10 text-mint-600 grid place-items-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3 class="font-display text-2xl font-600 mb-3">DATEV-Export in einem Klick</h3>
+        <p class="text-ink-700 leading-relaxed">
+          Kein CSV-Schlachtfest. Dein Steuerberater bekommt ASCII-DATEV mit Konten, Buchungen,
+          Belegen. Die Rechnung wird unten drunter geschrieben — nicht oben drauf.
+        </p>
+      </div>
+      <div class="p-8 rounded-2xl bg-white border border-ink-900/10">
+        <div class="w-10 h-10 rounded-lg bg-mint-500/10 text-mint-600 grid place-items-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <h3 class="font-display text-2xl font-600 mb-3">DeFi ohne Rätselraten</h3>
+        <p class="text-ink-700 leading-relaxed">
+          Uniswap, Aave, Lido, Pendle, Morpho, Curve — automatische Erkennung und
+          Klassifizierung nach Lending, Staking, LP, Swap. Du siehst, wie's gebucht wird, bevor's ans Finanzamt geht.
+        </p>
+      </div>
+      <div class="p-8 rounded-2xl bg-white border border-ink-900/10">
+        <div class="w-10 h-10 rounded-lg bg-mint-500/10 text-mint-600 grid place-items-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 class="font-display text-2xl font-600 mb-3">Deine Daten bleiben deine</h3>
+        <p class="text-ink-700 leading-relaxed">
+          Server in Frankfurt. Keine Weitergabe, keine Auswertung, keine Werbe-IDs.
+          Du kannst deine Daten jederzeit exportieren oder löschen — auf Knopfdruck.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREISE -->
+<section id="preise" class="py-24 bg-ink-900 text-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="chip bg-mint-500/20 text-mint-500 mb-4">Preise</span>
+      <h2 class="font-display text-4xl md:text-5xl font-600 tracking-tight">
+        Transparent, jährlich, deutsch.
+      </h2>
+      <p class="mt-5 text-white/75 text-lg">
+        Warteliste sichert dir den Early-Bird-Preis — <span class="text-mint-500 font-semibold">39 €</span> für das erste Jahr, unabhängig vom gewählten Tarif.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Free -->
+      <div class="p-8 rounded-2xl bg-white/5 border border-white/10">
+        <div class="text-sm uppercase tracking-widest text-white/60 mb-2">Free</div>
+        <div class="font-display text-5xl font-600 mb-1">0 €</div>
+        <div class="text-white/60 text-sm mb-6">pro Jahr</div>
+        <ul class="space-y-3 text-sm text-white/85">
+          <li>✓ Bis 25 Transaktionen</li>
+          <li>✓ Alle Börsen-Imports</li>
+          <li>✓ Vorläufiger Steuerreport</li>
+          <li class="text-white/40">— Kein DATEV-Export</li>
+        </ul>
+      </div>
+      <!-- Basic -->
+      <div class="p-8 rounded-2xl bg-white text-ink-900 ring-4 ring-mint-500 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-mint-500 text-white text-xs font-bold rounded-full uppercase tracking-widest">Beliebt</div>
+        <div class="text-sm uppercase tracking-widest text-ink-500 mb-2">Basic</div>
+        <div class="font-display text-5xl font-600 mb-1">79 €</div>
+        <div class="text-ink-500 text-sm mb-6">pro Jahr</div>
+        <ul class="space-y-3 text-sm text-ink-900">
+          <li>✓ Bis 1.000 Transaktionen</li>
+          <li>✓ FIFO, Haltefrist, §23 EStG</li>
+          <li>✓ DeFi-Klassifizierung</li>
+          <li>✓ DATEV-Export (ASCII)</li>
+          <li>✓ Support per Mail</li>
+        </ul>
+      </div>
+      <!-- Pro -->
+      <div class="p-8 rounded-2xl bg-white/5 border border-white/10">
+        <div class="text-sm uppercase tracking-widest text-white/60 mb-2">Pro</div>
+        <div class="font-display text-5xl font-600 mb-1">149 €</div>
+        <div class="text-white/60 text-sm mb-6">pro Jahr</div>
+        <ul class="space-y-3 text-sm text-white/85">
+          <li>✓ Unbegrenzte Transaktionen</li>
+          <li>✓ Alle Features von Basic</li>
+          <li>✓ Portfolio-Tracking live</li>
+          <li>✓ Priority-Support</li>
+          <li>✓ Voraus-Klärung mit Steuerberatern</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
+      <div>
+        <div class="font-display text-2xl font-600 mb-1">Steuerberater-Lizenz</div>
+        <p class="text-white/75 text-sm">Ab 499 €/Jahr pro Kanzlei, inkl. 10 Mandanten. Jeder weitere Mandant 29 €/Jahr.</p>
+      </div>
+      <a href="#waitlist" class="px-5 py-3 rounded-full bg-mint-500 text-ink-900 font-semibold hover:bg-mint-600 transition whitespace-nowrap">Kanzlei-Anfrage</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-24">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="font-display text-4xl md:text-5xl font-600 tracking-tight mb-12 text-center">Häufige Fragen</h2>
+
+    <div class="space-y-3">
+      <details class="group p-6 rounded-2xl bg-white border border-ink-900/10 hover:border-ink-900/20">
+        <summary class="cursor-pointer flex items-center justify-between font-semibold text-lg">
+          Warum brauche ich das jetzt, wo ich Jahre lang Excel hatte?
+          <span class="transition group-open:rotate-45 text-2xl text-ink-500">+</span>
+        </summary>
+        <p class="mt-4 text-ink-700 leading-relaxed">
+          MiCA und DAC8 sind seit 2025 in Kraft bzw. werden 2026 scharfgestellt.
+          Banken, Börsen und Steuerberater melden deine Krypto-Bestände automatisch ans Finanzamt.
+          Ab jetzt muss dein Report zur Meldung passen, nicht umgekehrt.
+        </p>
+      </details>
+
+      <details class="group p-6 rounded-2xl bg-white border border-ink-900/10 hover:border-ink-900/20">
+        <summary class="cursor-pointer flex items-center justify-between font-semibold text-lg">
+          Ich habe einen Steuerberater — brauche ich das trotzdem?
+          <span class="transition group-open:rotate-45 text-2xl text-ink-500">+</span>
+        </summary>
+        <p class="mt-4 text-ink-700 leading-relaxed">
+          Die meisten Steuerberater haben keine eigene Krypto-Software.
+          Mit dem DATEV-Export übergibst du deinem Berater genau das Format,
+          das seine Kanzlei-Software versteht — ohne manuelle Nachbearbeitung.
+          Viele Mandanten sparen dadurch mehrere Stunden Beratung (und Beratungsrechnung).
+        </p>
+      </details>
+
+      <details class="group p-6 rounded-2xl bg-white border border-ink-900/10 hover:border-ink-900/20">
+        <summary class="cursor-pointer flex items-center justify-between font-semibold text-lg">
+          Wie geht ihr mit DeFi-Spezialfällen wie Liquidity Mining oder Airdrops um?
+          <span class="transition group-open:rotate-45 text-2xl text-ink-500">+</span>
+        </summary>
+        <p class="mt-4 text-ink-700 leading-relaxed">
+          Wir folgen dem aktuellen BMF-Schreiben zur ertragsteuerlichen Behandlung virtueller Währungen.
+          Airdrops = sonstige Einkünfte bei Aufnahme, Staking-Rewards ebenso.
+          LP-Einlage = steuerneutraler Tausch (umstritten, wir zeigen beide Varianten).
+          Jede Klassifizierung ist im Report nachvollziehbar und einzeln änderbar.
+        </p>
+      </details>
+
+      <details class="group p-6 rounded-2xl bg-white border border-ink-900/10 hover:border-ink-900/20">
+        <summary class="cursor-pointer flex items-center justify-between font-semibold text-lg">
+          Wann geht's los?
+          <span class="transition group-open:rotate-45 text-2xl text-ink-500">+</span>
+        </summary>
+        <p class="mt-4 text-ink-700 leading-relaxed">
+          Early Access für Warteliste-Mitglieder: Sommer 2026.
+          Public Launch: Herbst 2026, rechtzeitig vor der Steuersaison 2026.
+          Steuerberater-Lizenzen ab Early Access verfügbar.
+        </p>
+      </details>
+
+      <details class="group p-6 rounded-2xl bg-white border border-ink-900/10 hover:border-ink-900/20">
+        <summary class="cursor-pointer flex items-center justify-between font-semibold text-lg">
+          Wo werden meine Daten gespeichert?
+          <span class="transition group-open:rotate-45 text-2xl text-ink-500">+</span>
+        </summary>
+        <p class="mt-4 text-ink-700 leading-relaxed">
+          In Deutschland. Server in Frankfurt, Backup verschlüsselt in Falkenstein.
+          Keine Weitergabe an Dritte, keine Werbe-IDs, kein Training von KI-Modellen auf deinen Daten.
+          Export und Löschung jederzeit per Knopfdruck.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section id="waitlist" class="py-24 bg-white border-t border-ink-900/10">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="font-display text-4xl md:text-6xl font-600 tracking-tight">
+      Sichere dir <span class="italic">39 €</span> für das erste Jahr.
+    </h2>
+    <p class="mt-6 text-lg text-ink-700 max-w-xl mx-auto">
+      Beschränkt auf die ersten 500 Warteliste-Anmeldungen. Kein Spam, eine Mail pro Monat.
+    </p>
+
+    <form id="waitlist-form-bottom" class="mt-10 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+      <input type="email" required placeholder="deine@mail.de"
+        class="flex-1 px-5 py-4 rounded-xl border border-ink-900/15 bg-white text-base focus:outline-none focus:border-ink-900 focus:ring-2 focus:ring-ink-900/10 placeholder:text-ink-500" />
+      <button type="submit"
+        class="px-6 py-4 rounded-xl bg-ink-900 text-white font-semibold hover:bg-ink-800 transition whitespace-nowrap">
+        Early Access sichern
+      </button>
+    </form>
+    <div id="waitlist-success" class="hidden mt-6 p-4 rounded-xl bg-mint-500/10 border border-mint-500/30 text-mint-600 font-semibold">
+      Danke — du bist auf der Liste. Wir melden uns.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-ink-900 text-white/70 py-12">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <div>
+      <div class="flex items-center gap-2 font-display font-semibold text-lg text-white mb-1">
+        <span class="w-7 h-7 rounded-lg bg-mint-500/20 text-mint-500 grid place-items-center font-bold">D</span>
+        Dwinity <span class="text-mint-500">Tax</span>
+      </div>
+      <div class="text-sm">Ein Produkt im Dwinity-Ecosystem.</div>
+    </div>
+    <nav class="flex flex-wrap gap-6 text-sm">
+      <a href="impressum.html" class="hover:text-white">Impressum</a>
+      <a href="datenschutz.html" class="hover:text-white">Datenschutz</a>
+      <a href="mailto:hello@dwinity.de" class="hover:text-white">Kontakt</a>
+      <a href="https://dwinity.de" class="hover:text-white">dwinity.de</a>
+    </nav>
+  </div>
+  <div class="max-w-6xl mx-auto px-6 mt-8 pt-8 border-t border-white/10 text-xs text-white/40">
+    © 2026 Dwinity. Kein steuerlicher Rat — Dwinity Tax ist ein Softwaretool, das deine Steuerberechnung unterstützt. Die finale Verantwortung liegt bei dir bzw. deinem Steuerberater.
+  </div>
+</footer>
+
+<script>
+  (function() {
+    const STORAGE_KEY = 'dwinity_tax_waitlist';
+    function handle(form, successEl) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = form.querySelector('input[type=email]').value.trim();
+        if (!email) return;
+        try {
+          const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          existing.push({ email, ts: new Date().toISOString() });
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+          // TODO: wire to Formspree/Mailchimp/own endpoint:
+          // await fetch('/api/waitlist', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, product:'tax'}) });
+        } catch (err) {}
+        form.reset();
+        if (successEl) {
+          successEl.classList.remove('hidden');
+          successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          alert('Danke — du bist auf der Liste.');
+        }
+      });
+    }
+    const topForm = document.getElementById('waitlist-form');
+    const bottomForm = document.getElementById('waitlist-form-bottom');
+    const success = document.getElementById('waitlist-success');
+    if (topForm) handle(topForm, success);
+    if (bottomForm) handle(bottomForm, success);
+  })();
+</script>
+
+</body>
+</html>
