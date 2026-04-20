@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dwinity Tax — Anmelden</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/img/dwinity-tx-32.png" />
+<link rel="icon" type="image/png" sizes="64x64" href="/img/dwinity-tx-256.png" />
+<link rel="apple-touch-icon" href="/img/dwinity-tx-256.png" />
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/theme.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container-app" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+    <a href="https://tax.mkwt-strategy.tech" class="brand">
+      <img src="/img/dwinity-tx-256.png" alt="" class="logo-glow" style="width:32px;height:32px;" />
+      <span>dwinity</span><span class="brand-suffix">tax</span>
+    </a>
+    <a href="https://tax.mkwt-strategy.tech" class="text-muted" style="font-size:13px;text-decoration:none;">← Zurück zur Website</a>
+  </div>
+</header>
+
+<main class="container-app" style="max-width:480px;padding-top:64px;">
+
+  <div class="glass-strong" style="padding:40px;">
+    <span class="badge-beta" style="margin-bottom:18px;">Beta-Zugang</span>
+    <h1 class="font-display" style="font-size:36px;font-weight:600;margin:14px 0 8px;line-height:1.1;">
+      Sign in to your <span class="brand-suffix">Tax</span>
+    </h1>
+    <p class="text-muted" style="font-size:14px;line-height:1.6;margin-bottom:28px;">
+      Magic-Link per E-Mail. Kein Passwort. Kein Tracking. Self-Custody by design.
+    </p>
+
+    <form id="login-form" class="col">
+      <div>
+        <label class="label" for="email">E-Mail</label>
+        <input type="email" id="email" required placeholder="you@somewhere.eth" class="input" autocomplete="email" />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">
+        Login-Link senden →
+      </button>
+    </form>
+
+    <div id="success" class="msg-ok hidden" style="margin-top:20px;">
+      ✓ Wenn die E-Mail bei uns bekannt ist, ist der Link unterwegs. Schau in dein Postfach (auch Spam).
+    </div>
+    <div id="error" class="msg-err hidden" style="margin-top:20px;"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;font-size:11px;color:var(--text-dim);letter-spacing:0.05em;">
+    BY SIGNING IN, YOU AGREE TO OUR
+    <a href="https://tax.mkwt-strategy.tech/datenschutz.html" class="text-cyan" style="text-decoration:none;">PRIVACY</a>
+    &amp;
+    <a href="https://tax.mkwt-strategy.tech/impressum.html" class="text-cyan" style="text-decoration:none;">IMPRINT</a>
+  </div>
+
+  <div style="text-align:center;margin-top:48px;font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;">
+    PART OF THE <span class="text-cyan">DWINITY</span> ECOSYSTEM
+  </div>
+
+</main>
+
+<script>
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const btn = e.target.querySelector('button');
+    const ok = document.getElementById('success');
+    const err = document.getElementById('error');
+    err.classList.add('hidden');
+    ok.classList.add('hidden');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = 'Sende …';
+    try {
+      const r = await fetch('/api/auth/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        throw new Error(d.detail || ('HTTP ' + r.status));
+      }
+      ok.classList.remove('hidden');
+      e.target.reset();
+    } catch (ex) {
+      err.textContent = '✗ ' + (ex.message || ex);
+      err.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  });
+</script>
+</body>
+</html>

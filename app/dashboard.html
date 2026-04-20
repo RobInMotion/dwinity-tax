@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dwinity Tax — App</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/img/dwinity-tx-32.png" />
+<link rel="icon" type="image/png" sizes="64x64" href="/img/dwinity-tx-256.png" />
+<link rel="apple-touch-icon" href="/img/dwinity-tx-256.png" />
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/theme.css" />
+<style>
+  .stat-card { padding: 22px; }
+  .stat-card .stat-label { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+  .stat-card .stat-meta  { font-size:11px; color:var(--text-dim); margin-top:10px; font-family:'JetBrains Mono',monospace; }
+  .grid-cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px; }
+  .upload-zone {
+    border:1.5px dashed rgba(0, 212, 255, 0.25);
+    border-radius:var(--radius);
+    padding:28px;
+    text-align:center;
+    background:var(--surface-1);
+    transition:all 0.2s ease;
+  }
+  .upload-zone:hover { border-color:var(--cyan); background:rgba(0,212,255,0.04); }
+  .filter-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .filter-row .input, .filter-row .select { width:auto; min-width:140px; }
+  .pager-btn {
+    padding:8px 14px; font-size:12px;
+    background:var(--surface-1); border:1px solid var(--border);
+    border-radius:var(--radius-sm); color:var(--text); cursor:pointer;
+  }
+  .pager-btn:hover:not(:disabled) { border-color:var(--cyan); color:var(--cyan); }
+  .pager-btn:disabled { opacity:0.3; cursor:not-allowed; }
+  @media (max-width:640px) { .grid-cards { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container-app" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+    <a href="/dashboard" class="brand">
+      <img src="/img/dwinity-tx-256.png" alt="" class="logo-glow" style="width:34px;height:34px;" />
+      <span>dwinity</span><span class="brand-suffix">tax</span>
+      <span class="badge-beta" style="margin-left:8px;">Beta</span>
+    </a>
+    <div class="row">
+      <span id="user-email" class="font-mono text-muted" style="font-size:12px;"></span>
+      <button id="btn-logout" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;">Logout</button>
+    </div>
+  </div>
+</header>
+
+<nav class="container-app" style="padding-top:24px;padding-bottom:0;">
+  <div class="tabs">
+    <button class="tab" data-tab="imports" aria-selected="true">Imports</button>
+    <button class="tab" data-tab="wallets" aria-selected="false">Wallets</button>
+    <button class="tab" data-tab="transactions" aria-selected="false">Transaktionen</button>
+    <button class="tab" data-tab="report" aria-selected="false">Steuerreport</button>
+  </div>
+</nav>
+
+<main class="container-app" style="padding-top:24px;">
+
+<!-- ============ TAB: IMPORTS ============ -->
+<section id="tab-imports" class="col" style="gap:18px;">
+
+  <div class="glass-strong" style="padding:32px;">
+    <div style="display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:240px;">
+        <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// upload</div>
+        <h2 class="font-display" style="font-size:26px;font-weight:600;margin-bottom:6px;">CSV importieren</h2>
+        <p class="text-muted" style="font-size:13px;line-height:1.6;">
+          Roh-CSV wird verschlüsselt auf <span class="text-cyan">Storj DCS</span> gesichert. Transaktionen werden geparst und in deine Tax-DB geschrieben.
+        </p>
+      </div>
+    </div>
+
+    <form id="upload-form" class="col" style="margin-top:24px;gap:18px;">
+      <div>
+        <label class="label" for="source-select">Quelle</label>
+        <select id="source-select" class="select" style="max-width:480px;"></select>
+      </div>
+      <div>
+        <label class="label">CSV-Datei</label>
+        <div class="upload-zone">
+          <input type="file" id="csv-file" accept=".csv,.tsv,.txt" required />
+          <p class="text-dim" style="font-size:11px;margin-top:8px;font-family:'JetBrains Mono',monospace;">CSV / TSV / TXT — max 20 MB</p>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Hochladen &amp; verarbeiten →</button>
+    </form>
+
+    <div id="upload-status" class="hidden" style="margin-top:18px;"></div>
+  </div>
+
+  <div class="glass-strong" style="padding:32px;">
+    <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// history</div>
+    <h2 class="font-display" style="font-size:22px;font-weight:600;margin-bottom:18px;">Bisherige Imports</h2>
+    <div id="imports-list" class="text-muted" style="font-size:13px;">Lade…</div>
+  </div>
+</section>
+
+<!-- ============ TAB: WALLETS ============ -->
+<section id="tab-wallets" class="col hidden" style="gap:18px;">
+  <div class="glass-strong" style="padding:32px;">
+    <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// on-chain</div>
+    <h2 class="font-display" style="font-size:26px;font-weight:600;margin-bottom:6px;">Wallet hinzufügen</h2>
+    <p class="text-muted" style="font-size:13px;line-height:1.6;margin-bottom:24px;">
+      Trag deine <span class="text-cyan">Read-Only Wallet-Adresse</span> ein — die App pullt alle On-Chain-Transaktionen direkt von der Blockchain. Kein Private Key nötig. Self-Custody by design.
+    </p>
+
+    <form id="wallet-form" class="col" style="gap:16px;">
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:14px;">
+        <div>
+          <label class="label" for="wallet-chain">Chain</label>
+          <select id="wallet-chain" class="select"></select>
+        </div>
+        <div>
+          <label class="label" for="wallet-address">Adresse</label>
+          <input id="wallet-address" type="text" class="input font-mono" placeholder="0x..." pattern="^0x[a-fA-F0-9]{40}$" required />
+        </div>
+      </div>
+      <div>
+        <label class="label" for="wallet-label">Label (optional)</label>
+        <input id="wallet-label" type="text" class="input" placeholder="z.B. Main Trading Wallet" />
+      </div>
+      <button type="submit" class="btn btn-primary" style="align-self:flex-start;">+ Wallet hinzufügen</button>
+    </form>
+
+    <div id="wallet-form-status" class="hidden" style="margin-top:16px;"></div>
+  </div>
+
+  <div class="glass-strong" style="padding:32px;">
+    <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// connected wallets</div>
+    <h2 class="font-display" style="font-size:22px;font-weight:600;margin-bottom:18px;">Deine Wallets</h2>
+    <div id="wallets-list" class="text-muted" style="font-size:13px;">Lade…</div>
+  </div>
+</section>
+
+<!-- ============ TAB: REPORT ============ -->
+<section id="tab-report" class="col hidden" style="gap:18px;">
+  <div class="glass-strong" style="padding:32px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin-bottom:8px;">
+      <div>
+        <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// tax report</div>
+        <h2 class="font-display" style="font-size:26px;font-weight:600;">Steuerreport</h2>
+      </div>
+      <div class="row" style="gap:12px;">
+        <select id="report-year" class="select" style="width:auto;min-width:120px;"></select>
+        <a id="report-download" href="#" class="btn btn-primary">↓ CSV Export</a>
+      </div>
+    </div>
+    <p id="report-meta" class="text-muted font-mono" style="font-size:12px;letter-spacing:0.04em;"></p>
+
+    <div id="report-grid" class="grid-cards" style="margin-top:24px;"></div>
+
+    <div style="margin-top:32px;">
+      <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">// asset breakdown</div>
+      <div id="report-assets" style="overflow-x:auto;"></div>
+    </div>
+
+    <div id="report-empty" class="hidden text-muted" style="text-align:center;padding:48px 0;font-size:14px;">
+      Keine Daten für dieses Jahr. Lade zuerst eine CSV unter „Imports" hoch.
+    </div>
+
+    <div class="msg-warn" style="margin-top:32px;">
+      <strong>EUR-Umrechnung:</strong> Pro Transaktion mit ECB-Tageskurs berechnet. USDT/USDC = USD-Proxy. Wochenend-Trades nutzen den letzten Werktagskurs.
+      <br><br>
+      <strong>Rechtlich:</strong> Perps-P&amp;L ist in DE 2026 zwischen §22 (sonstige Einkünfte) und §20 (Kapitalerträge mit 20.000&nbsp;€-Verlustverrechnungsgrenze) umstritten. Wir liefern die Rohdaten — Klassifizierung trifft dein Steuerberater.
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB: TRANSACTIONS ============ -->
+<section id="tab-transactions" class="col hidden" style="gap:18px;">
+  <div class="glass-strong" style="padding:32px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;">
+      <div>
+        <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">// ledger</div>
+        <h2 class="font-display" style="font-size:26px;font-weight:600;">Transaktionen</h2>
+      </div>
+      <div class="filter-row">
+        <select id="filter-kind" class="select">
+          <option value="">Alle Typen</option>
+          <option value="BUY">BUY</option>
+          <option value="SELL">SELL</option>
+          <option value="PNL_GAIN">PNL_GAIN</option>
+          <option value="PNL_LOSS">PNL_LOSS</option>
+          <option value="FUNDING_RECEIVED">FUNDING_RECV</option>
+          <option value="FUNDING_PAID">FUNDING_PAID</option>
+          <option value="DEPOSIT">DEPOSIT</option>
+          <option value="WITHDRAWAL">WITHDRAWAL</option>
+          <option value="REWARD">REWARD</option>
+        </select>
+        <input id="filter-asset" type="text" placeholder="ASSET" class="input" style="text-transform:uppercase;width:120px;" />
+        <button id="btn-filter" class="btn btn-ghost">Filter</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead><tr>
+          <th>Datum (UTC)</th><th>Typ</th><th>Asset</th><th class="num">Menge</th>
+          <th>Quote</th><th class="num">Quote-Wert</th><th class="num">Fee</th><th class="num">EUR</th>
+        </tr></thead>
+        <tbody id="tx-tbody"></tbody>
+      </table>
+    </div>
+    <div id="tx-empty" class="hidden text-muted" style="text-align:center;padding:48px 0;font-size:14px;">
+      Keine Transaktionen. Lade zuerst eine CSV unter „Imports" hoch.
+    </div>
+    <div id="tx-pager" class="hidden row" style="justify-content:space-between;margin-top:18px;">
+      <span id="tx-info" class="font-mono text-muted" style="font-size:12px;"></span>
+      <div class="row">
+        <button id="tx-prev" class="pager-btn">‹ Zurück</button>
+        <button id="tx-next" class="pager-btn">Weiter ›</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // ===== Auth =====
+  async function fetchMe() {
+    const r = await fetch('/api/me', { credentials: 'include' });
+    if (!r.ok) { window.location.replace('/'); return null; }
+    return r.json();
+  }
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    window.location.replace('/');
+  });
+
+  // ===== Tabs =====
+  const tabs = document.querySelectorAll('.tab[data-tab]');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', 'false'));
+    t.setAttribute('aria-selected', 'true');
+    document.getElementById('tab-imports').classList.toggle('hidden', t.dataset.tab !== 'imports');
+    document.getElementById('tab-wallets').classList.toggle('hidden', t.dataset.tab !== 'wallets');
+    document.getElementById('tab-transactions').classList.toggle('hidden', t.dataset.tab !== 'transactions');
+    document.getElementById('tab-report').classList.toggle('hidden', t.dataset.tab !== 'report');
+    if (t.dataset.tab === 'transactions') loadTransactions();
+    if (t.dataset.tab === 'report') loadReport();
+    if (t.dataset.tab === 'wallets') loadWallets();
+  }));
+
+  // ===== Sources =====
+  async function loadSources() {
+    const r = await fetch('/api/sources', { credentials: 'include' });
+    const sources = await r.json();
+    const sel = document.getElementById('source-select');
+    sel.innerHTML = '';
+    for (const s of sources) {
+      const o = document.createElement('option');
+      o.value = s.key; o.textContent = s.label;
+      if (s.disabled) o.disabled = true;
+      sel.appendChild(o);
+    }
+  }
+
+  // ===== Imports =====
+  async function loadImports() {
+    const r = await fetch('/api/imports', { credentials: 'include' });
+    const list = await r.json();
+    const el = document.getElementById('imports-list');
+    if (!list.length) { el.innerHTML = '<p style="padding:24px 0;text-align:center;">Noch keine Imports.</p>'; return; }
+    el.innerHTML = '';
+    const tbl = document.createElement('table');
+    tbl.className = 'tbl';
+    tbl.innerHTML = '<thead><tr><th>Datum</th><th>Quelle</th><th>Datei</th><th class="num">Trades</th><th>Notiz</th><th></th></tr></thead><tbody></tbody>';
+    const tb = tbl.querySelector('tbody');
+    for (const i of list) {
+      const tr = document.createElement('tr');
+      const d = new Date(i.uploaded_at).toLocaleString('de-DE');
+      tr.innerHTML = `<td class="text-muted">${d}</td>
+        <td><span class="pill pill-other">${escape(i.source)}</span></td>
+        <td>${escape(i.filename)}</td>
+        <td class="num">${i.transaction_count}</td>
+        <td class="text-dim" style="font-size:11px;">${escape(i.notes || '')}</td>
+        <td><button data-id="${i.id}" class="del-btn btn btn-danger-ghost">Löschen</button></td>`;
+      tb.appendChild(tr);
+    }
+    el.appendChild(tbl);
+    tb.querySelectorAll('.del-btn').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('Import mit allen Transaktionen löschen?')) return;
+      const r = await fetch('/api/imports/' + b.dataset.id, { method: 'DELETE', credentials: 'include' });
+      if (r.ok) loadImports(); else alert('Fehler beim Löschen.');
+    }));
+  }
+
+  document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = document.getElementById('csv-file').files[0];
+    const source = document.getElementById('source-select').value;
+    const status = document.getElementById('upload-status');
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('source', source);
+    status.className = 'msg-info';
+    status.classList.remove('hidden');
+    status.textContent = '⟳ Lade hoch & parse…';
+    try {
+      const r = await fetch('/api/imports', { method: 'POST', credentials: 'include', body: fd });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.detail || ('HTTP ' + r.status));
+      status.className = 'msg-ok';
+      let msg = `✓ ${d.transaction_count} Trades importiert.`;
+      if (d.skipped) msg += ` ${d.skipped} Zeilen übersprungen.`;
+      if (d.warnings?.length) msg += ` Hinweise: ${d.warnings.slice(0,3).join('; ')}`;
+      status.textContent = msg;
+      e.target.reset();
+      loadImports();
+    } catch (ex) {
+      status.className = 'msg-err';
+      status.textContent = '✗ ' + (ex.message || ex);
+    }
+  });
+
+  // ===== Transactions =====
+  let txOffset = 0;
+  const TX_LIMIT = 100;
+
+  async function loadTransactions() {
+    const params = new URLSearchParams({ limit: TX_LIMIT, offset: txOffset });
+    const k = document.getElementById('filter-kind').value;
+    const a = document.getElementById('filter-asset').value.trim().toUpperCase();
+    if (k) params.set('kind', k);
+    if (a) params.set('asset', a);
+    const r = await fetch('/api/transactions?' + params, { credentials: 'include' });
+    const d = await r.json();
+    const tbody = document.getElementById('tx-tbody');
+    const empty = document.getElementById('tx-empty');
+    const pager = document.getElementById('tx-pager');
+    tbody.innerHTML = '';
+    if (!d.items.length) { empty.classList.remove('hidden'); pager.classList.add('hidden'); return; }
+    empty.classList.add('hidden');
+    for (const t of d.items) {
+      const tr = document.createElement('tr');
+      const dt = t.ts ? new Date(t.ts).toLocaleString('de-DE') : '–';
+      const pillClass = (t.kind === 'BUY' || t.kind === 'PNL_GAIN' || t.kind === 'FUNDING_RECEIVED' || t.kind === 'REWARD' || t.kind === 'DEPOSIT')
+        ? 'pill-buy'
+        : (t.kind === 'SELL' || t.kind === 'PNL_LOSS' || t.kind === 'FUNDING_PAID' || t.kind === 'WITHDRAWAL' || t.kind === 'FEE')
+        ? 'pill-sell' : 'pill-other';
+      tr.innerHTML = `
+        <td class="text-muted font-mono" style="font-size:12px;">${dt}</td>
+        <td><span class="pill ${pillClass}">${t.kind}</span></td>
+        <td><strong>${escape(t.asset)}</strong></td>
+        <td class="num">${fmtDec(t.amount)}</td>
+        <td class="text-muted">${escape(t.quote_asset || '–')}</td>
+        <td class="num text-muted">${fmtDec(t.quote_amount)}</td>
+        <td class="num text-dim">${t.fee_amount ? fmtDec(t.fee_amount) + ' ' + (t.fee_asset||'') : '–'}</td>
+        <td class="num text-cyan"><strong>${t.eur_value ? fmtDec(t.eur_value) + ' €' : '–'}</strong></td>`;
+      tbody.appendChild(tr);
+    }
+    document.getElementById('tx-info').textContent = `${d.offset + 1}–${Math.min(d.offset + d.items.length, d.total)} von ${d.total}`;
+    document.getElementById('tx-prev').disabled = txOffset === 0;
+    document.getElementById('tx-next').disabled = txOffset + d.items.length >= d.total;
+    pager.classList.remove('hidden');
+  }
+
+  document.getElementById('btn-filter').addEventListener('click', () => { txOffset = 0; loadTransactions(); });
+  document.getElementById('tx-prev').addEventListener('click', () => { txOffset = Math.max(0, txOffset - TX_LIMIT); loadTransactions(); });
+  document.getElementById('tx-next').addEventListener('click', () => { txOffset += TX_LIMIT; loadTransactions(); });
+
+  // ===== Report =====
+  const REPORT_CARDS = [
+    { key: 'perps',       label: 'Realized P&L', sub: 'Geschlossene Perp-Positionen',
+      explain: 'Summe aus Gewinnen und Verlusten geschlossener Hebel-Trades. Steuerlich oft als Termingeschäft (§20/§22) zu behandeln.',
+      posLabel: 'Gewinne', negLabel: 'Verluste' },
+    { key: 'funding',     label: 'Funding-Zahlungen', sub: 'Perpetual-Funding-Saldo',
+      explain: 'Funding-Rate-Zahlungen: erhalten (positiv) oder gezahlt (negativ). Meist sonstige Einkünfte / Werbungskosten.',
+      posLabel: 'Erhalten', negLabel: 'Gezahlt' },
+    { key: 'fees',        label: 'Trading-Gebühren', sub: 'Maker/Taker Fees',
+      explain: 'Gebühren der Börse für Order-Ausführung. Werbungskosten — mindern den steuerpflichtigen Gewinn.',
+      posLabel: '', negLabel: 'Gezahlt' },
+    { key: 'rewards',     label: 'Rewards & Staking', sub: 'Passive Einkünfte',
+      explain: 'Airdrops, Staking-Rewards, Cashback. In DE meist sonstige Einkünfte (§22 Nr. 3) zum Zuflusszeitpunkt.',
+      posLabel: 'Erhalten', negLabel: '' },
+    { key: 'spot_buy',    label: 'Spot-Käufe', sub: 'Anschaffungen',
+      explain: 'Wert der gekauften Coins. Startet die einjährige Haltefrist nach §23 EStG.',
+      posLabel: 'Volumen', negLabel: '' },
+    { key: 'spot_sell',   label: 'Spot-Verkäufe', sub: 'Veräußerungen',
+      explain: 'Wert der verkauften Coins. Innerhalb 1 Jahr Haltefrist steuerpflichtig (§23 EStG, ab 2024 1.000€ Freigrenze).',
+      posLabel: '', negLabel: 'Volumen' },
+    { key: 'deposits',    label: 'Einzahlungen', sub: 'Eigene Transfers rein',
+      explain: 'Steuerlich neutral — kein Verkauf, kein Erwerb. Nur Bewegung zwischen eigenen Wallets/Konten.',
+      posLabel: 'Rein', negLabel: '' },
+    { key: 'withdrawals', label: 'Auszahlungen', sub: 'Eigene Transfers raus',
+      explain: 'Steuerlich neutral wie Einzahlungen. Wichtig nur als Audit-Trail.',
+      posLabel: '', negLabel: 'Raus' },
+  ];
+
+  const KIND_LABELS = {
+    PNL_GAIN: 'Gewinn', PNL_LOSS: 'Verlust',
+    FUNDING_RECEIVED: 'Funding +', FUNDING_PAID: 'Funding −',
+    BUY: 'Kauf', SELL: 'Verkauf',
+    DEPOSIT: 'Eingang', WITHDRAWAL: 'Ausgang',
+    REWARD: 'Reward', STAKING: 'Staking', AIRDROP: 'Airdrop',
+    FEE: 'Gebühr',
+  };
+
+  async function loadReport() {
+    const yearsR = await fetch('/api/report/years', { credentials: 'include' });
+    const { years } = await yearsR.json();
+    const sel = document.getElementById('report-year');
+    sel.innerHTML = '';
+    if (!years.length) {
+      document.getElementById('report-empty').classList.remove('hidden');
+      document.getElementById('report-grid').innerHTML = '';
+      document.getElementById('report-assets').innerHTML = '';
+      document.getElementById('report-meta').textContent = '';
+      return;
+    }
+    years.sort((a,b)=>b-a);
+    for (const y of years) {
+      const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o);
+    }
+    sel.onchange = () => renderReport(parseInt(sel.value));
+    renderReport(years[0]);
+  }
+
+  async function renderReport(year) {
+    document.getElementById('report-empty').classList.add('hidden');
+    document.getElementById('report-download').href = `/api/report/export.csv?year=${year}`;
+    const r = await fetch(`/api/report/summary?year=${year}`, { credentials: 'include' });
+    const d = await r.json();
+    const grid = document.getElementById('report-grid');
+    grid.innerHTML = '';
+
+    document.getElementById('report-meta').innerHTML =
+      `Aggregierte Übersicht aller steuerrelevanten Bewegungen für <strong class="text-cyan">${year}</strong> · ${d.tx_count} Transaktionen verarbeitet`;
+
+    // Hero-Karte: Gesamt-Saldo
+    const heroCls = d.total_net > 0 ? 'text-up glow-mint' : d.total_net < 0 ? 'text-down glow-red' : 'text-muted';
+    const heroEur = d.total_net_eur ? `<div style="font-size:18px;font-weight:600;color:var(--text-muted);margin-top:6px;font-family:'JetBrains Mono',monospace;">≈ ${fmtSigned(d.total_net_eur)} EUR</div>` : '';
+    const hero = document.createElement('div');
+    hero.className = 'glass-strong';
+    hero.style.cssText = 'grid-column:1/-1;padding:28px;background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(0,255,163,0.04));';
+    hero.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
+        <div>
+          <div class="font-mono" style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Gesamtsaldo ${year}</div>
+          <div class="stat-num ${heroCls}" style="font-size:44px;">${fmtSigned(d.total_net)} <span style="font-size:20px;color:var(--text-muted);">USDT</span></div>
+          ${heroEur}
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);max-width:280px;line-height:1.6;font-family:'JetBrains Mono',monospace;">
+          Summe aller Bewegungen. Positiv = Zugang, negativ = Abgang. Spot-Käufe/Einzahlungen sind steuerlich neutral und fließen mit ein.
+        </div>
+      </div>`;
+    grid.appendChild(hero);
+
+    for (const c of REPORT_CARDS) {
+      const s = d.summary[c.key];
+      const sEur = (d.summary_eur && d.summary_eur[c.key]) || null;
+      const count = (d.by_kind && Object.entries(d.by_kind)
+        .filter(([k]) => (KIND_GROUPS_FRONTEND[c.key] || []).includes(k))
+        .reduce((sum, [, v]) => sum + v.count, 0)) || 0;
+
+      const card = document.createElement('div');
+      const isZero = s.net === 0 && s.received === 0 && s.paid === 0;
+      const netCls = s.net > 0 ? 'text-up' : s.net < 0 ? 'text-down' : 'text-dim';
+      const numCls = s.net > 0 ? 'text-up glow-mint' : s.net < 0 ? 'text-down glow-red' : 'text-dim';
+
+      const eurLine = (sEur && sEur.net !== 0)
+        ? `<div class="font-mono ${netCls}" style="font-size:13px;font-weight:600;margin-top:4px;">≈ ${fmtSigned(sEur.net)} EUR</div>`
+        : '';
+
+      const breakdown = (s.received !== 0 || s.paid !== 0) && (c.posLabel || c.negLabel)
+        ? `<div style="display:flex;gap:14px;margin-top:14px;font-size:11px;font-family:'JetBrains Mono',monospace;">
+            ${s.received !== 0 && c.posLabel ? `<span><span class="text-dim">${c.posLabel}</span> <span class="text-up">+${fmtSigned(s.received)}</span></span>` : ''}
+            ${s.paid !== 0 && c.negLabel ? `<span><span class="text-dim">${c.negLabel}</span> <span class="text-down">${fmtSigned(s.paid)}</span></span>` : ''}
+          </div>` : '';
+
+      card.className = isZero ? 'glass stat-card' : 'glass stat-card clickable-card';
+      card.style.opacity = isZero ? '0.45' : '1';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px;">
+          <div>
+            <div class="stat-label" style="margin-bottom:2px;">${c.label}</div>
+            <div class="text-dim" style="font-size:11px;">${c.sub}</div>
+          </div>
+          <span class="font-mono text-dim" style="font-size:10px;background:var(--surface-2);padding:2px 8px;border-radius:99px;border:1px solid var(--border);">${count} TX</span>
+        </div>
+        <div class="stat-num ${numCls}">${isZero ? '0' : fmtSigned(s.net)} <span style="font-size:14px;color:var(--text-muted);font-weight:500;">USDT</span></div>
+        ${eurLine}
+        ${breakdown}
+        <div class="text-dim" style="font-size:11px;line-height:1.5;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">${c.explain}${isZero ? '' : ' <span class="text-cyan">→ Klick für Details</span>'}</div>`;
+      if (!isZero) {
+        card.addEventListener('click', () => openCardDrill(c, year));
+      }
+      grid.appendChild(card);
+    }
+
+    if (d.eur_unavailable_assets?.length) {
+      const warn = document.createElement('div');
+      warn.className = 'msg-warn';
+      warn.style.gridColumn = '1 / -1';
+      warn.innerHTML = `<strong>Hinweis:</strong> Für ${d.eur_unavailable_assets.join(', ')} ist keine ECB-Umrechnung verfügbar. EUR-Werte teilweise unvollständig — die Original-USDT/Coin-Werte bleiben aber präzise.`;
+      grid.appendChild(warn);
+    }
+
+    // Assets-Tabelle mit lesbaren Spalten-Namen
+    const assetsEl = document.getElementById('report-assets');
+    const kinds = Object.keys(d.by_kind);
+    const assets = Object.keys(d.by_asset);
+    if (!assets.length) {
+      assetsEl.innerHTML = '<p class="text-muted" style="padding:16px 0;font-size:13px;">Keine Asset-Aufschlüsselung.</p>';
+      return;
+    }
+    let html = `<p class="text-muted" style="font-size:12px;margin-bottom:12px;">Welcher Coin wurde wofür bewegt — pro Asset eine Zeile.</p>`;
+    html += '<table class="tbl"><thead><tr><th>Asset</th>';
+    for (const k of kinds) html += `<th class="num" title="${k}">${KIND_LABELS[k] || k}</th>`;
+    html += '</tr></thead><tbody>';
+    for (const a of assets) {
+      html += `<tr><td><strong>${escape(a)}</strong></td>`;
+      for (const k of kinds) {
+        const v = d.by_asset[a][k];
+        const cls = v > 0 ? 'text-up' : v < 0 ? 'text-down' : 'text-dim';
+        html += `<td class="num ${cls}">${v !== undefined ? fmtSigned(v) : '–'}</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    assetsEl.innerHTML = html;
+  }
+
+  // Frontend-Kopie der Backend-KIND_GROUPS (für TX-Count pro Karte)
+  const KIND_GROUPS_FRONTEND = {
+    perps:       ['PNL_GAIN', 'PNL_LOSS'],
+    funding:     ['FUNDING_RECEIVED', 'FUNDING_PAID'],
+    fees:        ['FEE'],
+    deposits:    ['DEPOSIT'],
+    withdrawals: ['WITHDRAWAL'],
+    spot_buy:    ['BUY'],
+    spot_sell:   ['SELL'],
+    rewards:     ['REWARD', 'STAKING', 'AIRDROP'],
+  };
+
+  // ===== Wallets =====
+  let walletChains = [];
+
+  async function loadWalletChains() {
+    if (walletChains.length) return;
+    const r = await fetch('/api/wallets/chains', { credentials: 'include' });
+    walletChains = await r.json();
+    const sel = document.getElementById('wallet-chain');
+    sel.innerHTML = '';
+    for (const c of walletChains) {
+      const o = document.createElement('option');
+      o.value = c.key; o.textContent = `${c.label} (${c.native})`;
+      sel.appendChild(o);
+    }
+  }
+
+  async function loadWallets() {
+    await loadWalletChains();
+    const r = await fetch('/api/wallets', { credentials: 'include' });
+    const list = await r.json();
+    const el = document.getElementById('wallets-list');
+    if (!list.length) { el.innerHTML = '<p style="padding:24px 0;text-align:center;">Noch keine Wallets verknüpft. Trag oben eine Adresse ein und sync deine On-Chain-Historie.</p>'; return; }
+    el.innerHTML = '';
+    for (const w of list) {
+      const chain = walletChains.find(c => c.key === w.chain) || { label: w.chain, native: '?', explorer: '#' };
+      const synced = w.last_synced_at ? `Letzter Sync: ${new Date(w.last_synced_at).toLocaleString('de-DE')}` : 'Noch nicht synchronisiert';
+      const card = document.createElement('div');
+      card.className = 'glass';
+      card.style.cssText = 'padding:20px;margin-bottom:12px;';
+      card.innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
+          <div style="min-width:0;flex:1;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+              <span class="badge-beta" style="background:rgba(157,77,255,0.12);color:var(--purple);border-color:rgba(157,77,255,0.3);">${escape(chain.label)}</span>
+              ${w.label ? `<strong>${escape(w.label)}</strong>` : ''}
+              <span class="font-mono text-dim" style="font-size:10px;background:var(--surface-2);padding:2px 8px;border-radius:99px;border:1px solid var(--border);">${w.tx_count} TX</span>
+            </div>
+            <div class="font-mono text-muted" style="font-size:12px;word-break:break-all;">
+              <a href="${chain.explorer}/address/${w.address}" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;">${w.address}</a>
+            </div>
+            <div class="text-dim" style="font-size:11px;margin-top:6px;">${synced}</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary sync-btn" data-id="${w.id}" style="padding:8px 16px;font-size:13px;">⟳ Sync</button>
+            <button class="btn btn-danger-ghost del-btn" data-id="${w.id}">Entfernen</button>
+          </div>
+        </div>
+        <div class="sync-status hidden" style="margin-top:14px;"></div>`;
+      el.appendChild(card);
+    }
+
+    el.querySelectorAll('.sync-btn').forEach(b => b.addEventListener('click', async () => {
+      const status = b.closest('.glass').querySelector('.sync-status');
+      status.className = 'sync-status msg-info';
+      status.classList.remove('hidden');
+      status.textContent = '⟳ Synchronisiere mit Etherscan… (kann bei großer Wallet-Historie 10–30 Sekunden dauern)';
+      b.disabled = true;
+      try {
+        const r = await fetch('/api/wallets/' + b.dataset.id + '/sync', { method: 'POST', credentials: 'include' });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.detail || ('HTTP ' + r.status));
+        status.className = 'sync-status msg-ok';
+        status.textContent = `✓ ${d.fetched} On-Chain-Transaktionen geprüft, ${d.inserted} neu hinzugefügt.`;
+        loadWallets();
+      } catch (ex) {
+        status.className = 'sync-status msg-err';
+        status.textContent = '✗ ' + (ex.message || ex);
+      } finally {
+        b.disabled = false;
+      }
+    }));
+
+    el.querySelectorAll('.del-btn').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('Wallet entfernen? Alle dazugehörigen Transaktionen werden gelöscht.')) return;
+      const r = await fetch('/api/wallets/' + b.dataset.id, { method: 'DELETE', credentials: 'include' });
+      if (r.ok) loadWallets(); else alert('Fehler beim Löschen.');
+    }));
+  }
+
+  document.getElementById('wallet-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('wallet-form-status');
+    const payload = {
+      chain: document.getElementById('wallet-chain').value,
+      address: document.getElementById('wallet-address').value.trim(),
+      label: document.getElementById('wallet-label').value.trim() || null,
+    };
+    status.className = 'msg-info';
+    status.classList.remove('hidden');
+    status.textContent = '⟳ Speichere Wallet…';
+    try {
+      const r = await fetch('/api/wallets', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.detail || ('HTTP ' + r.status));
+      status.className = 'msg-ok';
+      status.textContent = '✓ Wallet hinzugefügt. Klick "Sync" um die Historie zu pullen.';
+      e.target.reset();
+      loadWallets();
+    } catch (ex) {
+      status.className = 'msg-err';
+      status.textContent = '✗ ' + (ex.message || ex);
+    }
+  });
+
+  // ===== Modals =====
+  function showModal(title, bodyHtml) {
+    closeModal();
+    const wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.id = 'modal';
+    wrap.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>${title}</div>
+          <button class="modal-close" type="button">×</button>
+        </div>
+        <div class="modal-body">${bodyHtml}</div>
+      </div>`;
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', (e) => { if (e.target === wrap) closeModal(); });
+    wrap.querySelector('.modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', escClose);
+    return wrap.querySelector('.modal-body');
+  }
+  function closeModal() {
+    const m = document.getElementById('modal');
+    if (m) m.remove();
+    document.removeEventListener('keydown', escClose);
+  }
+  function escClose(e) { if (e.key === 'Escape') closeModal(); }
+
+  async function openCardDrill(cardCfg, year) {
+    const kinds = KIND_GROUPS_FRONTEND[cardCfg.key] || [];
+    const title = `<div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;">// ${cardCfg.key}</div>
+                   <div class="font-display" style="font-size:20px;font-weight:600;margin-top:4px;">${cardCfg.label} <span class="text-dim" style="font-size:13px;font-weight:400;">— ${year}</span></div>`;
+    const body = showModal(title, '<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>');
+
+    // Lade alle Trades für diese kinds (kombiniert aus mehreren Calls)
+    let allItems = [];
+    for (const k of kinds) {
+      const params = new URLSearchParams({ kind: k, limit: 500 });
+      const r = await fetch('/api/transactions?' + params, { credentials: 'include' });
+      const d = await r.json();
+      // Filter clientseitig auf das Jahr (Backend hat noch keinen year-Filter auf /api/transactions)
+      const filtered = d.items.filter(t => t.ts && new Date(t.ts).getUTCFullYear() === year);
+      allItems = allItems.concat(filtered);
+    }
+    allItems.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+
+    if (!allItems.length) {
+      body.innerHTML = '<p class="text-muted" style="text-align:center;padding:40px;">Keine Transaktionen in dieser Kategorie für ' + year + '.</p>';
+      return;
+    }
+
+    let html = `<p class="text-muted" style="font-size:12px;margin-bottom:14px;">${allItems.length} Transaktionen — klick auf eine Zeile für Roh-Daten.</p>`;
+    html += '<div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Datum</th><th>Typ</th><th>Asset</th><th class="num">Menge</th><th class="num">EUR</th><th></th></tr></thead><tbody>';
+    for (const t of allItems) {
+      const dt = new Date(t.ts).toLocaleString('de-DE');
+      const pillCls = (t.kind === 'PNL_GAIN' || t.kind === 'FUNDING_RECEIVED' || t.kind === 'BUY' || t.kind === 'REWARD' || t.kind === 'DEPOSIT') ? 'pill-buy'
+                    : (t.kind === 'PNL_LOSS' || t.kind === 'FUNDING_PAID' || t.kind === 'SELL' || t.kind === 'WITHDRAWAL' || t.kind === 'FEE') ? 'pill-sell'
+                    : 'pill-other';
+      html += `<tr style="cursor:pointer;" data-tx="${t.id}">
+        <td class="text-muted font-mono" style="font-size:12px;">${dt}</td>
+        <td><span class="pill ${pillCls}">${t.kind}</span></td>
+        <td><strong>${escape(t.asset)}</strong></td>
+        <td class="num">${fmtDec(t.amount)}</td>
+        <td class="num text-cyan">${t.eur_value ? fmtDec(t.eur_value) + ' €' : '–'}</td>
+        <td class="text-cyan" style="text-align:right;font-size:14px;">→</td>
+      </tr>`;
+    }
+    html += '</tbody></table></div>';
+    body.innerHTML = html;
+    body.querySelectorAll('tr[data-tx]').forEach(row => {
+      row.addEventListener('click', () => openTxDetail(row.dataset.tx));
+    });
+  }
+
+  async function openTxDetail(txId) {
+    const title = `<div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;">// transaction</div>
+                   <div class="font-mono" style="font-size:13px;color:var(--text-muted);margin-top:4px;">${txId}</div>`;
+    const body = showModal(title, '<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>');
+    const r = await fetch('/api/transactions/' + txId, { credentials: 'include' });
+    if (!r.ok) { body.innerHTML = '<p class="text-down">Fehler beim Laden.</p>'; return; }
+    const t = await r.json();
+
+    let meta = '';
+    try { meta = t.source_meta ? JSON.stringify(JSON.parse(t.source_meta), null, 2) : ''; }
+    catch { meta = t.source_meta || ''; }
+
+    const importInfo = t.import ? `
+      <dt>Quelle</dt><dd>${escape(t.import.source)}</dd>
+      <dt>Datei</dt><dd>${escape(t.import.filename)}</dd>
+      <dt>Importiert</dt><dd>${new Date(t.import.uploaded_at).toLocaleString('de-DE')}</dd>` : '';
+
+    body.innerHTML = `
+      <dl class="kv" style="margin-bottom:24px;">
+        <dt>Zeitstempel</dt><dd>${t.ts ? new Date(t.ts).toLocaleString('de-DE') : '–'}</dd>
+        <dt>Typ</dt><dd><span class="pill pill-other">${t.kind}</span></dd>
+        <dt>Asset</dt><dd><strong>${escape(t.asset)}</strong></dd>
+        <dt>Menge</dt><dd>${fmtDec(t.amount)} ${escape(t.asset)}</dd>
+        ${t.quote_asset ? `<dt>Quote</dt><dd>${fmtDec(t.quote_amount)} ${escape(t.quote_asset)}</dd>` : ''}
+        ${t.fee_amount ? `<dt>Gebühr</dt><dd>${fmtDec(t.fee_amount)} ${escape(t.fee_asset || '')}</dd>` : ''}
+        ${t.eur_value ? `<dt>EUR-Wert</dt><dd class="text-cyan">${fmtDec(t.eur_value)} €</dd>` : ''}
+        ${importInfo}
+      </dl>
+      ${meta ? `
+        <div class="font-mono text-cyan" style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:8px;">// raw csv row</div>
+        <pre class="code-block">${escape(meta)}</pre>
+      ` : ''}
+      ${t.import_id ? `
+        <div style="margin-top:24px;">
+          <a href="/api/imports/${t.import_id}/download" class="btn btn-ghost" download>↓ Original-CSV herunterladen</a>
+        </div>` : ''}
+    `;
+  }
+
+  function fmtSigned(n) {
+    if (n === null || n === undefined) return '–';
+    const sign = n > 0 ? '+' : n < 0 ? '−' : '';
+    return sign + Math.abs(n).toLocaleString('de-DE', { maximumFractionDigits: 4 });
+  }
+
+  // ===== Helpers =====
+  function escape(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function fmtDec(s) {
+    if (s === null || s === undefined) return '–';
+    const n = parseFloat(s);
+    if (!isFinite(n)) return s;
+    if (Math.abs(n) < 1e-6 && n !== 0) return n.toExponential(2);
+    return n.toLocaleString('de-DE', { maximumFractionDigits: 8 });
+  }
+
+  // ===== Init =====
+  (async () => {
+    const me = await fetchMe();
+    if (!me) return;
+    document.getElementById('user-email').textContent = me.email;
+    await loadSources();
+    await loadImports();
+  })();
+</script>
+</body>
+</html>
